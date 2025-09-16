@@ -1,0 +1,21 @@
+package cs353.api.network;
+
+public class ComputationOutput {
+    private final String result;
+
+    public ComputationOutput(String result)
+    {
+        this.result = result;
+    }
+
+    public String getResult()
+    { 
+    	return result; 
+    }
+
+    @Override
+    public String toString() 
+    {
+        return result;
+    }
+}
