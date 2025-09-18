@@ -1,6 +1,5 @@
 package apinetwork;
 
-public interface Output
-{
+public interface Output {
 
 }

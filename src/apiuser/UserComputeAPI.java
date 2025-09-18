@@ -8,5 +8,5 @@ import project.annotations.NetworkAPI;
 
 @NetworkAPI
 public interface UserComputeAPI {
-    JobRequest createJob(Input source, Output dest, Delimiters delimiters);
+	JobRequest createJob(Input source, Output dest, Delimiters delimiters);
 }
