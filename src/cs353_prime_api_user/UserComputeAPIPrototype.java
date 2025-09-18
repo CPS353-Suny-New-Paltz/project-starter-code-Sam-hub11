@@ -1,6 +1,6 @@
-package cs353.prime.api.user;
+package cs353_prime_api_user;
 
-import cs353.api.network.*;
+import cs353_api_network.*;
 import project.annotations.NetworkAPIPrototype;
 
 public class UserComputeAPIPrototype  implements UserComputeAPI {

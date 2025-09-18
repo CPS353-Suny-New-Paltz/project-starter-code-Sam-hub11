@@ -1,6 +1,6 @@
-package cs353.prime.api.storage;
+package cs353_prime_api_storage;
 
-import cs353.api.network.*;
+import cs353_api_network.*;
 import project.annotations.ProcessAPIPrototype;
 
 public class StorageComputeAPIPrototype implements StorageComputeAPI {
