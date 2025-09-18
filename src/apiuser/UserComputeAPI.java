@@ -7,7 +7,6 @@ import apinetwork.Output;
 import project.annotations.NetworkAPI;
 
 @NetworkAPI
-public interface UserComputeAPI 
-{
+public interface UserComputeAPI {
     JobRequest createJob(Input source, Output dest, Delimiters delimiters);
 }

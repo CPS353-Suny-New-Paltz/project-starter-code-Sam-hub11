@@ -1,6 +1,5 @@
 package apinetwork;
 
-public interface Input 
-{
+public interface Input {
 	
 }

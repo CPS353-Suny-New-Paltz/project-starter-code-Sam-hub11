@@ -3,19 +3,16 @@ package apinetwork;
 public class ComputationOutput {
     private final String result;
 
-    public ComputationOutput(String result)
-    {
+    public ComputationOutput(String result){
         this.result = result;
     }
 
-    public String getResult()
-    { 
+    public String getResult(){ 
     	return result; 
     }
 
     @Override
-    public String toString() 
-    {
+    public String toString() {
         return result;
     }
 }
