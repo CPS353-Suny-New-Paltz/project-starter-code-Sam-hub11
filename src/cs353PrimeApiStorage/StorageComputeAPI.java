@@ -1,6 +1,8 @@
-package cs353_prime_api_storage;
+package cs353PrimeApiStorage;
 
-import cs353_api_network.*;
+
+import cs353ApiNetwork.ComputationInput;
+import cs353ApiNetwork.ComputationOutput;
 import project.annotations.ProcessAPI;
 
 @ProcessAPI

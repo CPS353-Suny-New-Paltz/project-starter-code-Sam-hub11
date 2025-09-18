@@ -1,4 +1,4 @@
-package cs353_api_network;
+package cs353ApiNetwork;
 
 public interface Input 
 {
