@@ -1,4 +1,4 @@
-package cs353apinetwork;
+package cs353.api.network;
 
 public class ComputationOutput {
     private final String result;

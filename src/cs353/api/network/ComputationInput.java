@@ -1,4 +1,4 @@
-package cs353apinetwork;
+package cs353.api.network;
 
 import java.util.*;
 
