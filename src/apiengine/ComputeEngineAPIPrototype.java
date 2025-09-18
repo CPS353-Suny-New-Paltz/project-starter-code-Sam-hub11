@@ -1,7 +1,7 @@
-package cs353.prime.api.engine;
+package apiengine;
 
-import cs353.api.network.ComputationInput;
-import cs353.api.network.ComputationOutput;
+import apinetwork.ComputationInput;
+import apinetwork.ComputationOutput;
 import project.annotations.ConceptualAPIPrototype;
 
 public class ComputeEngineAPIPrototype implements ComputeEngineAPI {

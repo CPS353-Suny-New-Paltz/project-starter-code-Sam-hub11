@@ -1,8 +1,8 @@
-package cs353.prime.api.storage;
+package apistorage;
 
 
-import cs353.api.network.ComputationInput;
-import cs353.api.network.ComputationOutput;
+import apinetwork.ComputationInput;
+import apinetwork.ComputationOutput;
 import project.annotations.ProcessAPI;
 
 @ProcessAPI

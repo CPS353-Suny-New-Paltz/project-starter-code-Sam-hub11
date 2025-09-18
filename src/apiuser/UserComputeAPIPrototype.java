@@ -1,9 +1,9 @@
-package cs353.prime.api.user;
+package apiuser;
 
-import cs353.api.network.Delimiters;
-import cs353.api.network.Input;
-import cs353.api.network.JobRequest;
-import cs353.api.network.Output;
+import apinetwork.Delimiters;
+import apinetwork.Input;
+import apinetwork.JobRequest;
+import apinetwork.Output;
 import project.annotations.NetworkAPIPrototype;
 
 public class UserComputeAPIPrototype  implements UserComputeAPI {
