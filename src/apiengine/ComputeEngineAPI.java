@@ -8,4 +8,5 @@ import project.annotations.ConceptualAPI;
 public interface ComputeEngineAPI {
 
     ComputationOutput runComputation(ComputationInput input);
+
 }
