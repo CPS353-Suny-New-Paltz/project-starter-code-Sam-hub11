@@ -1,9 +1,9 @@
-package cs353PrimeApiUser;
+package cs353primeapiuser;
 
-import cs353ApiNetwork.Delimiters;
-import cs353ApiNetwork.Input;
-import cs353ApiNetwork.JobRequest;
-import cs353ApiNetwork.Output;
+import cs353apinetwork.Delimiters;
+import cs353apinetwork.Input;
+import cs353apinetwork.JobRequest;
+import cs353apinetwork.Output;
 import project.annotations.NetworkAPI;
 
 @NetworkAPI

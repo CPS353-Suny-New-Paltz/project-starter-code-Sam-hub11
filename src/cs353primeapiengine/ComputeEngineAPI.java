@@ -1,7 +1,7 @@
-package cs353PrimeApiEngine;
+package cs353primeapiengine;
 
-import cs353ApiNetwork.ComputationInput;
-import cs353ApiNetwork.ComputationOutput;
+import cs353apinetwork.ComputationInput;
+import cs353apinetwork.ComputationOutput;
 import project.annotations.ConceptualAPI;
 
 @ConceptualAPI
