@@ -1,34 +1,37 @@
 package apiengine;
 
+import project.annotations.ConceptualAPIPrototype;
+import java.util.ArrayList;
+import java.util.List;
 import apinetwork.ComputationInput;
 import apinetwork.ComputationOutput;
-import project.annotations.ConceptualAPIPrototype;
 
-public class ComputeEngineAPIPrototype  {
-
+public class ComputeEngineAPIPrototype {
     @ConceptualAPIPrototype
-    public ComputationOutput runComputation(ComputationInput input) {
-        return new ComputationOutput("2 × 2 × 3 × 5");
+    public ComputeEngineAPI prototype(ComputeEngineAPI api) {
+        return new ComputeEngineAPI() {
+            @Override
+            public String runComputation(int inputNumber) {
+                if (inputNumber <= 1) return String.valueOf(inputNumber);
+
+                List<Integer> factors = new ArrayList<>();
+                int n = inputNumber;
+                for (int i = 2; i <= n / i; i++) {
+                    while (n % i == 0) {
+                        factors.add(i);
+                        n /= i;
+                    }
+                }
+                if (n > 1) factors.add(n);
+
+                return String.join(" × ", factors.stream().map(String::valueOf).toArray(String[]::new));
+            }
+
+			@Override
+			public ComputationOutput runComputation(ComputationInput input) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+        };
     }
 }
-
-//package datastore;
-//
-//
-//public class DataStorePrototype {
-//
-//    public void prototype(DataStore store) {
-//        // Specifically: Store the string "Hello world"
-//        
-//        // store bytes
-//        
-//        DataStoreResponse hwKey = store.insertRequest(new DataRequest("Hello world".getBytes()));
-//        DataStoreResponse classKey = store.insertRequest(new DataRequest("CPS 353".getBytes()));
-//        
-//        if (hwKey.getResultCode().success()) {
-//            //        Later, get back the string that we stored (Hello world)
-//            String result = new String(store.loadData(hwKey.getId()));
-//        }
-//
-//    }
-//}

@@ -1,12 +1,10 @@
 package apiuser;
 
-import apinetwork.Delimiters;
-import apinetwork.Input;
 import apinetwork.JobRequest;
-import apinetwork.Output;
+import apinetwork.JobSpecification;
 import project.annotations.NetworkAPI;
 
 @NetworkAPI
 public interface UserComputeAPI {
-	JobRequest createJob(Input source, Output dest, Delimiters delimiters);
+    JobRequest createJob(JobSpecification spec);
 }

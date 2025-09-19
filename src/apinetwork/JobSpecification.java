@@ -1,10 +1,10 @@
 package apinetwork;
 
-public class ComputationInput {
+public class JobSpecification {
     private final int inputNumber;
     private final Delimiters delimiters;
 
-    public ComputationInput(int inputNumber, Delimiters delimiters) {
+    public JobSpecification(int inputNumber, Delimiters delimiters) {
         this.inputNumber = inputNumber;
         this.delimiters = delimiters;
     }

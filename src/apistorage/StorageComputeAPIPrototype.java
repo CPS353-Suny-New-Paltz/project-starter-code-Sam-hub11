@@ -1,19 +1,23 @@
 package apistorage;
 
-import apinetwork.ComputationInput;
-import apinetwork.ComputationOutput;
 import project.annotations.ProcessAPIPrototype;
 
-public class StorageComputeAPIPrototype implements StorageComputeAPI {
-
+public class StorageComputeAPIPrototype {
     @ProcessAPIPrototype
-    @Override
-    public ComputationInput readInput() {
-        return new ComputationInput(new int[]{60}); // prototype input
-    }
+    public StorageComputeAPI prototype(StorageComputeAPI api) {
+        return new StorageComputeAPI() {
+            private int storedInput;
 
-    @Override
-    public void writeOutput(ComputationOutput output) {
-        System.out.println("Prototype output: " + output);
+            @Override
+            public int readInput() {
+                storedInput = 123456; // example input
+                return storedInput;
+            }
+
+            @Override
+            public void writeOutput(String output) {
+                System.out.println("Computation result: " + output);
+            }
+        };
     }
 }
