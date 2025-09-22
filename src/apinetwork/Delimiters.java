@@ -9,6 +9,10 @@ public class Delimiters {
         this.pairDelimiter = pairDelimiter;
     }
 
-    public String getInputResultDelimiter() { return inputResultDelimiter; }
-    public String getPairDelimiter() { return pairDelimiter; }
+    public String getInputResultDelimiter() { 
+    	return inputResultDelimiter; 
+    	}
+    public String getPairDelimiter() { 
+    	return pairDelimiter; 
+    	}
 }
