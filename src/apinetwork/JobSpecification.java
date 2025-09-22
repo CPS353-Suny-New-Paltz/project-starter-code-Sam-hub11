@@ -9,6 +9,10 @@ public class JobSpecification {
         this.delimiters = delimiters;
     }
 
-    public int getInputNumber() { return inputNumber; }
-    public Delimiters getDelimiters() { return delimiters; }
+    public int getInputNumber() { 
+    	return inputNumber; 
+    	}
+    public Delimiters getDelimiters() { 
+    	return delimiters; 
+    	}
 }

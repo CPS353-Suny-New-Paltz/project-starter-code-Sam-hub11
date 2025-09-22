@@ -7,5 +7,7 @@ public class Output {
         this.result = result;
     }
 
-    public String getResult() { return result; }
+    public String getResult() { 
+    	return result; 
+    	}
 }
