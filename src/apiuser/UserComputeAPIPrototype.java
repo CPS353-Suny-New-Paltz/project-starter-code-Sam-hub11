@@ -1,19 +1,17 @@
 package apiuser;
 
-import apinetwork.Delimiters;
-import apinetwork.Input;
 import apinetwork.JobRequest;
-import apinetwork.Output;
-import project.annotations.NetworkAPIPrototype;
+import apinetwork.JobSpecification;
+//import project.annotations.NetworkAPIPrototype;
 
-public class UserComputeAPIPrototype  implements UserComputeAPI {
-
-    @NetworkAPIPrototype
-    @Override
-    public JobRequest createJob(Input source, Output dest, Delimiters delimiters) {
-        if (delimiters == null) {
-            delimiters = new Delimiters(";", ":");
-        }
-        return new JobRequest(source, dest, delimiters);
+public class UserComputeAPIPrototype {
+//    @NetworkAPIPrototype
+    public UserComputeAPI prototype(UserComputeAPI api) {
+        return new UserComputeAPI() {
+            @Override
+            public JobRequest createJob(JobSpecification spec) {
+                return new JobRequest(spec.getInputNumber(), spec.getDelimiters());
+            }
+        };
     }
 }

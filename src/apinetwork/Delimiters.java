@@ -1,19 +1,18 @@
 package apinetwork;
 
 public class Delimiters {
+    private final String inputResultDelimiter;
     private final String pairDelimiter;
-    private final String resultDelimiter;
 
-    public Delimiters(String pairDelimiter, String resultDelimiter) {
+    public Delimiters(String inputResultDelimiter, String pairDelimiter) {
+        this.inputResultDelimiter = inputResultDelimiter;
         this.pairDelimiter = pairDelimiter;
-        this.resultDelimiter = resultDelimiter;
     }
 
-    public String getPairDelimiter() {
+    public String getInputResultDelimiter() { 
+    	return inputResultDelimiter; 
+    	}
+    public String getPairDelimiter() { 
     	return pairDelimiter; 
-    }
-    public String getResultDelimiter() {
-    	return resultDelimiter; 
-    }
+    	}
 }
-
