@@ -10,4 +10,4 @@
 - Input: 123456  
   Output: 2 × 2 × 2 × 2 × 2 × 3858 × 401  
 
-![IMG_2268](https://github.com/user-attachments/assets/6909f50d-57a1-4e26-98ea-c3918ba6bc4d)
+![IMG_2268](IMG_2268.jpeg)
