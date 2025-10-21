@@ -1,6 +1,11 @@
 package apistorage;
 
+import java.util.List;
+
 @project.annotations.ProcessAPI
 public interface ProcessAPI {
-    void writeOutput(String data);
+	//reading input
+	List<String> readInput();
+	
+    boolean writeOutput(String data);
 }
