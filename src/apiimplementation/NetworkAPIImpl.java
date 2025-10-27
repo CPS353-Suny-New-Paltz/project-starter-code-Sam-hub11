@@ -1,6 +1,8 @@
 package apiimplementation;
 
 import apiengine.NetworkAPI;
+import apinetwork.JobRequest;
+import apinetwork.ComputationOutput;
 import apistorage.ProcessAPI;
 
 public class NetworkAPIImpl implements NetworkAPI {
@@ -11,7 +13,16 @@ public class NetworkAPIImpl implements NetworkAPI {
     }
 
     @Override
-    public void sendJob(String job) {
-        if (processAPI != null) processAPI.writeOutput("network-send:" + job);
+    public ComputationOutput sendJob(JobRequest job) {
+        if (job == null) {
+            processAPI.writeOutput("network:null-job");
+            return new ComputationOutput("invalid-job");
+        }
+
+        String result = "network:queued:" + job.getInputNumber();
+        processAPI.writeOutput(result);
+
+        // Returning placeholder
+        return new ComputationOutput(result);
     }
 }

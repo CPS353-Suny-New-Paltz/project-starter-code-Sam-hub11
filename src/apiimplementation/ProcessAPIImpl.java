@@ -1,19 +1,23 @@
 package apiimplementation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import apistorage.ProcessAPI;
 
-public class ProcessAPIImpl implements ProcessAPI {
-    private final List<String> outputs = new ArrayList<>();
-    private final List<String> inputs = new ArrayList<>();
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-    public ProcessAPIImpl() { }
+public class ProcessAPIImpl implements ProcessAPI {
+    private final List<Integer> inputs = new ArrayList<>();
+    private final List<String> outputs = new ArrayList<>();
+
+    public ProcessAPIImpl() {
+
+    }
+
 
     @Override
-    public List<String> readInput() {
-        return inputs;
+    public List<Integer> readInputs() {
+        return Collections.unmodifiableList(new ArrayList<>(inputs));
     }
 
     @Override
@@ -27,6 +31,11 @@ public class ProcessAPIImpl implements ProcessAPI {
     }
 
     // helpers for tests
-    public List<String> getOutputs() { return outputs; }
-    public void addInput(String s) { inputs.add(s); }
+    public List<String> getAllOutputs() {
+        return Collections.unmodifiableList(new ArrayList<>(outputs));
+    }
+
+    public void addInput(int v) {
+        inputs.add(v);
+    }
 }

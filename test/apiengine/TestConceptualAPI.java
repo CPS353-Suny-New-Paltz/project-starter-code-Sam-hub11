@@ -2,8 +2,9 @@ package apiengine;
 
 import apiimplementation.ConceptualAPIImpl;
 import apinetwork.ComputationInput;
-import apinetwork.Delimiters;
+import apinetwork.ComputationOutput;
 import apistorage.ProcessAPI;
+import apinetwork.Delimiters;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -11,15 +12,39 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class TestConceptualAPI {
+
     @Test
-    public void smokeTest_compute_invokesProcessWrite() {
+    public void compute_shouldReturnOutput_and_writeToProcessAPI() {
+        // Arrange: mock the ProcessAPI dependency
+        ProcessAPI mockProcess = Mockito.mock(ProcessAPI.class);
+        // make writeOutput succeed by default
+        when(mockProcess.writeOutput(anyString())).thenReturn(true);
+
+        ConceptualAPIImpl engine = new ConceptualAPIImpl(mockProcess);
+
+        // Use a Delimiters object per your DTO signature (can be null)
+        ComputationInput input = new ComputationInput(10, new Delimiters(":", " × "));
+
+        // Act
+        ComputationOutput out = engine.compute(input);
+
+        // Assert basic invariants: non-null output and ProcessAPI write called
+        assertNotNull(out, "ComputationOutput should not be null");
+        assertNotNull(out.getResult(), "ComputationOutput result should not be null (may be empty)");
+        verify(mockProcess, atLeastOnce()).writeOutput(anyString());
+    }
+
+    @Test
+    public void compute_nullInput_writesNullAndReturnsNullResult() {
         ProcessAPI mockProcess = Mockito.mock(ProcessAPI.class);
         when(mockProcess.writeOutput(anyString())).thenReturn(true);
 
         ConceptualAPIImpl engine = new ConceptualAPIImpl(mockProcess);
-        ComputationInput input = new ComputationInput(10, new Delimiters(":", ","));
 
-        assertNotNull(engine.compute(input));
-        verify(mockProcess, atLeastOnce()).writeOutput(anyString());
+        ComputationOutput out = engine.compute(null);
+
+        assertNotNull(out, "ComputationOutput should not be null even for null input");
+
+         verify(mockProcess).writeOutput(anyString());
     }
 }
