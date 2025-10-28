@@ -26,7 +26,7 @@
 
   <module name="TreeWalker">
   <module name="JavadocMethod">
-     <property name="scope" value="public"/>
+    <property name="accessModifiers" value="public"/>
     <property name="allowMissingParamTags" value="false"/>
     <property name="allowMissingReturnTag" value="false"/>
     <property name="allowMissingThrowsTags" value="false"/>
