@@ -60,7 +60,9 @@ public class ConceptualAPIImpl implements ConceptualAPI {
             }
             f += 2;
         }
-        if (n > 1) factors.add(n);
+        if (n > 1) {
+        	factors.add(n);
+        }
         return factors;
     }
 

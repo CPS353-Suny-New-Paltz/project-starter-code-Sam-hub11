@@ -1,15 +1,19 @@
 package apiengine;
 
-import apiimplementation.ConceptualAPIImpl;
-import apinetwork.ComputationInput;
-import apinetwork.ComputationOutput;
-import apistorage.ProcessAPI;
-import apinetwork.Delimiters;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import apiimplementation.ConceptualAPIImpl;
+import apinetwork.ComputationInput;
+import apinetwork.ComputationOutput;
+import apinetwork.Delimiters;
+import apistorage.ProcessAPI;
 
 public class TestConceptualAPI {
 

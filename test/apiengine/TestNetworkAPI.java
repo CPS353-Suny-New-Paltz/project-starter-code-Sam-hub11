@@ -1,15 +1,18 @@
 package apiengine;
 
-import apiimplementation.NetworkAPIImpl;
-import apinetwork.JobRequest;
-import apinetwork.ComputationOutput;
-import apistorage.ProcessAPI;
-import apinetwork.Delimiters;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import apiimplementation.NetworkAPIImpl;
+import apinetwork.ComputationOutput;
+import apinetwork.Delimiters;
+import apinetwork.JobRequest;
+import apistorage.ProcessAPI;
 
 public class TestNetworkAPI {
 

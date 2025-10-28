@@ -17,9 +17,11 @@ public class TestProcessDataStore implements ProcessAPI {
 
     @Override
     public List<Integer> readInputs() {
-        List<Integer> src = inputConfig == null ? null : inputConfig.getInputs();
-        if (src == null) return new ArrayList<>();
-        return new ArrayList<>(src);
+    	List<Integer> src = inputConfig == null ? null : inputConfig.getInputs();
+    	if (src == null) {
+    	    return new ArrayList<>();
+    	}
+    	return new ArrayList<>(src);
     }
 
  //will write a string output to the TestOutputConfig.
@@ -27,7 +29,9 @@ public class TestProcessDataStore implements ProcessAPI {
     @Override
     public boolean writeOutput(String data) {
         try {
-            if (outputConfig == null) return false;
+            if (outputConfig == null) {
+            	return false;
+            }
             outputConfig.write(data);
             return true;
         } catch (Throwable t) {
