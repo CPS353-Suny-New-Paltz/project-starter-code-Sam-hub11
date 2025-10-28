@@ -21,15 +21,15 @@ public class ComputeEngineIntegrationTest {
         TestOutputConfig outputConfig = new TestOutputConfig();
         TestProcessDataStore testStore = new TestProcessDataStore(inputConfig, outputConfig);
 
-        // --- Instantiate your Conceptual API implementation and inject the test store
+        //Instantiate your Conceptual API implementation and inject the test store
         ConceptualAPIImpl conceptual = new ConceptualAPIImpl(testStore);
 
-        // --- Act: run the computation for each input (no delimiters specified -> pass null)
+        //Act: run the computation for each input (no delimiters specified -> pass null)
         for (Integer n : testStore.readInputs()) {
             conceptual.compute(new ComputationInput(n, (Delimiters) null));
         }
 
-        // --- Assert: validate what was written to the test output matches expected factorization strings
+        //Assert: validate what was written to the test output matches expected factorization strings
         List<String> outputs = outputConfig.getOutputs();
 
         // Expected final outputs once compute is implemented:
@@ -39,11 +39,11 @@ public class ComputeEngineIntegrationTest {
                 "5 × 5"       
         );
 
-        // Verify size first
+        //Verify size first
         assertEquals(expected.size(), outputs.size(),
                 "Number of outputs written should match number of inputs");
 
-        // Then verify content (order matters: same order as inputs)
+        //Verify content (order matters: same order as inputs)
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i), outputs.get(i),
                     "Output mismatch at index " + i + " (input=" + inputConfig.getInputs().get(i) + ")");

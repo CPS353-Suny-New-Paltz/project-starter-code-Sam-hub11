@@ -7,10 +7,10 @@ import apinetwork.ComputationOutput;
 public class NetworkAPIPrototype {
 
     public void runPrototype(NetworkAPI api) {
-        // Create a simple job request
+        // Create a job request
         JobRequest job = new JobRequest(10, new Delimiters(":", " × "));
 
-        // Call the API (which should eventually process the job)
+        // Call the API
         ComputationOutput result = api.sendJob(job);
 
         // Print placeholder output for prototype verification

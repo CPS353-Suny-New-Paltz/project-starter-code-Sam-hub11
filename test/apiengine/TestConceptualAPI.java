@@ -15,20 +15,16 @@ public class TestConceptualAPI {
 
     @Test
     public void compute_shouldReturnOutput_and_writeToProcessAPI() {
-        // Arrange: mock the ProcessAPI dependency
+        // mock the ProcessAPI dependency
         ProcessAPI mockProcess = Mockito.mock(ProcessAPI.class);
         // make writeOutput succeed by default
         when(mockProcess.writeOutput(anyString())).thenReturn(true);
 
         ConceptualAPIImpl engine = new ConceptualAPIImpl(mockProcess);
-
-        // Use a Delimiters object per your DTO signature (can be null)
         ComputationInput input = new ComputationInput(10, new Delimiters(":", " × "));
-
-        // Act
         ComputationOutput out = engine.compute(input);
 
-        // Assert basic invariants: non-null output and ProcessAPI write called
+        // non-null output and ProcessAPI write called
         assertNotNull(out, "ComputationOutput should not be null");
         assertNotNull(out.getResult(), "ComputationOutput result should not be null (may be empty)");
         verify(mockProcess, atLeastOnce()).writeOutput(anyString());

@@ -18,7 +18,7 @@ public class TestProcessAPI {
         assertNotNull(initial);
         assertEquals(0, initial.size(), "new store should have zero inputs by default");
 
-        // add a test input — ProcessAPIImpl exposes addInput(int) helper from earlier design
+        // add a test input
         store.addInput(42);
         List<Integer> after = store.readInputs();
         assertEquals(1, after.size(), "store should reflect added input");

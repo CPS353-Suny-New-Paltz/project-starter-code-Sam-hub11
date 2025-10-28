@@ -22,7 +22,7 @@ public class TestProcessDataStore implements ProcessAPI {
         return new ArrayList<>(src);
     }
 
- //    * Writes a string output to the test output config.
+ //will write a string output to the test output config.
  
     @Override
     public boolean writeOutput(String data) {

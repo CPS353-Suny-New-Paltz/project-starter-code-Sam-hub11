@@ -12,7 +12,7 @@ public class TestInputConfig {
     }
 
 
-     // Tests and test-only data stores can read this list to simulate input sources. 
+     // Tests data stores that can read this list to simulate input sources. 
 
     public List<Integer> getInputs() {
         return inputs;
