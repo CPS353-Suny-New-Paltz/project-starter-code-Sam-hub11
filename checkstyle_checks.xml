@@ -28,8 +28,6 @@
   <module name="JavadocMethod">
     <property name="accessModifiers" value="public"/>
     <property name="allowMissingParamTags" value="false"/>
-    <property name="allowMissingReturnTag" value="false"/>
-    <property name="allowMissingThrowsTags" value="false"/>
     </module>
     <module name="OuterTypeFilename"/>
     <module name="IllegalTokenText">
