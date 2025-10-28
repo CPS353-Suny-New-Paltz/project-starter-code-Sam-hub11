@@ -6,7 +6,7 @@ import apinetwork.Delimiters;
 public class ConceptualAPIPrototype {
 
     @project.annotations.ConceptualAPIPrototype
-    public ComputationOutput prototype (ConceptualAPI api) {
+    public ComputationOutput prototype(ConceptualAPI api) {
     	Delimiters delimiters = new Delimiters(" ", " ");
 		ComputationInput input = new ComputationInput(1, delimiters ); 
 		return api.compute(input);
