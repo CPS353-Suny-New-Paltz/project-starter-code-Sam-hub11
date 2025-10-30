@@ -1,6 +1,9 @@
 package apiengine;
 
+import apinetwork.ComputationOutput;
+import apinetwork.JobRequest;
+
 @project.annotations.NetworkAPI
 public interface NetworkAPI {
-	void sendJob(String job);
+	ComputationOutput sendJob(JobRequest job);
 }
