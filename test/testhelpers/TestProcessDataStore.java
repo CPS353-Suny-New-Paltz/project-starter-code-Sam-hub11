@@ -24,7 +24,7 @@ public class TestProcessDataStore implements ProcessAPI {
     	return new ArrayList<>(src);
     }
 
- //will write a string output to the TestOutputConfig.
+ //will write a string output to the TestOutputConfig
  
     @Override
     public boolean writeOutput(String data) {
