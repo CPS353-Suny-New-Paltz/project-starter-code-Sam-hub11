@@ -87,9 +87,12 @@ public class ConceptualAPIImpl implements ConceptualAPI {
     private String joinFactors(List<Integer> factors, String delim) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < factors.size(); i++) {
-            if (i > 0) sb.append(delim);
+            if (i > 0) {
+            	sb.append(delim);
+            }
             sb.append(factors.get(i));
         }
         return sb.toString();
     }
 }
+
