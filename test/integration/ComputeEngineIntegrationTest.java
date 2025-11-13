@@ -1,7 +1,6 @@
 package integration;
 
 import apiimplementation.ConceptualAPIImpl;
-import apiimplementation.NetworkAPIImpl;
 import apinetwork.ComputationInput;
 import apinetwork.Delimiters;
 import org.junit.jupiter.api.Test;
@@ -24,10 +23,8 @@ public class ComputeEngineIntegrationTest {
 
         //Instantiate your Conceptual API implementation and inject the test store
         ConceptualAPIImpl conceptual = new ConceptualAPIImpl(testStore);
+        //The constructor ConceptualAPIImpl(TestProcessDataStore) is undefined
         
-        new NetworkAPIImpl(testStore);
-
-        //Act: run the computation for each input (no delimiters specified -> pass null)
         for (Integer n : testStore.readInputs()) {
             conceptual.compute(new ComputationInput(n, (Delimiters) null));
         }
@@ -35,7 +32,6 @@ public class ComputeEngineIntegrationTest {
         //Assert: validate what was written to the test output matches expected factorization strings
         List<String> outputs = outputConfig.getOutputs();
 
-        // Expected final outputs once compute is implemented:
         List<String> expected = Arrays.asList(
                 "1",          
                 "2 × 5",     
