@@ -1,43 +1,65 @@
 package apiengine;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import apiimplementation.NetworkAPIImpl;
-import apinetwork.ComputationOutput;
+import apiimplementation.ConceptualAPIImpl;
 import apinetwork.Delimiters;
 import apinetwork.JobRequest;
-import apistorage.ProcessAPI;
+import testhelpers.TestInputConfig;
+import testhelpers.TestOutputConfig;
+import testhelpers.TestProcessDataStore;
 
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Tests for NetworkAPIImpl that assert observable outputs (no Mockito.verify).
+ */
 public class TestNetworkAPI {
 
     @Test
-    public void testSendJob_ValidRequest() {
-        ProcessAPI mockProcess = Mockito.mock(ProcessAPI.class);
-        when(mockProcess.writeOutput(anyString())).thenReturn(true);
+    public void testSendJob_ValidRequest_writesResultToStore() {
+        TestInputConfig in = new TestInputConfig(Arrays.asList());
+        TestOutputConfig outConfig = new TestOutputConfig();
+        TestProcessDataStore store = new TestProcessDataStore(in, outConfig);
 
-        NetworkAPIImpl network = new NetworkAPIImpl(mockProcess);
+        ConceptualAPIImpl conceptual = new ConceptualAPIImpl();
+        //The constructor ConceptualAPIImpl() is undefined
+        NetworkAPIImpl network = new NetworkAPIImpl(store, conceptual);
+        //The constructor NetworkAPIImpl(TestProcessDataStore, ConceptualAPIImpl) is undefined
+
         JobRequest req = new JobRequest(5, new Delimiters(":", " × "));
+        apinetwork.ComputationOutput out = network.sendJob(req);
 
-        ComputationOutput out = network.sendJob(req);
-
-        assertNotNull(out, "ComputationOutput should not be null");
-        verify(mockProcess).writeOutput(anyString());
+        assertNotNull(out);
+        List<String> outputs = outConfig.getOutputs();
+        assertEquals(1, outputs.size());
+        assertEquals("5", outputs.get(0));
     }
 
     @Test
-    public void testSendJob_NullRequest() {
-        ProcessAPI mockProcess = Mockito.mock(ProcessAPI.class);
-        NetworkAPIImpl network = new NetworkAPIImpl(mockProcess);
+    public void testSendJob_BatchMode_readsStoreAndWritesResults() {
+        TestInputConfig in = new TestInputConfig(Arrays.asList(1, 10, 25));
+        TestOutputConfig outConfig = new TestOutputConfig();
+        TestProcessDataStore store = new TestProcessDataStore(in, outConfig);
 
-        ComputationOutput out = network.sendJob(null);
+        ConceptualAPIImpl conceptual = new ConceptualAPIImpl();
+        //The constructor ConceptualAPIImpl() is undefined
+        NetworkAPIImpl network = new NetworkAPIImpl(store, conceptual);
+        //The constructor ConceptualAPIImpl() is undefined
 
-        assertNotNull(out, "ComputationOutput should be returned even for null request");
-        verify(mockProcess).writeOutput(anyString());
+        JobRequest batchJob = new JobRequest(-1, new Delimiters(":", " × "));
+        apinetwork.ComputationOutput summary = network.sendJob(batchJob);
+
+        assertNotNull(summary);
+        List<String> outputs = outConfig.getOutputs();
+        assertEquals(4, outputs.size()); // 3 results + summary
+        assertEquals("1", outputs.get(0));
+        assertEquals("2 × 5", outputs.get(1));
+        assertEquals("5 × 5", outputs.get(2));
+        assertEquals("batch:completed:3", outputs.get(3));
     }
 }

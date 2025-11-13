@@ -1,7 +1,6 @@
 package integration;
 
 import apiimplementation.ConceptualAPIImpl;
-import apiimplementation.NetworkAPIImpl;
 import apinetwork.ComputationInput;
 import apinetwork.Delimiters;
 import org.junit.jupiter.api.Test;
@@ -24,8 +23,6 @@ public class ComputeEngineIntegrationTest {
 
         //Instantiate your Conceptual API implementation and inject the test store
         ConceptualAPIImpl conceptual = new ConceptualAPIImpl(testStore);
-        
-        new NetworkAPIImpl(testStore);
 
         //Act: run the computation for each input (no delimiters specified -> pass null)
         for (Integer n : testStore.readInputs()) {
