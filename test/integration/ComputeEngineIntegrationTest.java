@@ -23,7 +23,8 @@ public class ComputeEngineIntegrationTest {
 
         //Instantiate your Conceptual API implementation and inject the test store
         ConceptualAPIImpl conceptual = new ConceptualAPIImpl(testStore);
-
+        //The constructor ConceptualAPIImpl(TestProcessDataStore) is undefined
+        
         //Act: run the computation for each input (no delimiters specified -> pass null)
         for (Integer n : testStore.readInputs()) {
             conceptual.compute(new ComputationInput(n, (Delimiters) null));
