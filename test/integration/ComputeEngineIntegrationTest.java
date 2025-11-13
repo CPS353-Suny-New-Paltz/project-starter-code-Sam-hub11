@@ -25,7 +25,6 @@ public class ComputeEngineIntegrationTest {
         ConceptualAPIImpl conceptual = new ConceptualAPIImpl(testStore);
         //The constructor ConceptualAPIImpl(TestProcessDataStore) is undefined
         
-        //Act: run the computation for each input (no delimiters specified -> pass null)
         for (Integer n : testStore.readInputs()) {
             conceptual.compute(new ComputationInput(n, (Delimiters) null));
         }
@@ -33,7 +32,6 @@ public class ComputeEngineIntegrationTest {
         //Assert: validate what was written to the test output matches expected factorization strings
         List<String> outputs = outputConfig.getOutputs();
 
-        // Expected final outputs once compute is implemented:
         List<String> expected = Arrays.asList(
                 "1",          
                 "2 × 5",     
