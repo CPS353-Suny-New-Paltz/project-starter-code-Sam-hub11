@@ -16,11 +16,17 @@ public class ManualTestingFramework {
     // Parses raw string lines into integers, skipping blank and malformed entries.
     public static List<Integer> parseInputLines(List<String> rawLines) {
         List<Integer> ints = new ArrayList<>();
-        if (rawLines == null) return ints;
+        if (rawLines == null) {
+            return ints;   // Braces added
+        }
         for (String s : rawLines) {
-            if (s == null) continue;
+            if (s == null) {
+                continue; // Braces added
+            }
             String t = s.trim();
-            if (t.isEmpty()) continue;
+            if (t.isEmpty()) {
+                continue; // Braces added
+            }
             try {
                 ints.add(Integer.parseInt(t));
             } catch (NumberFormatException nfe) {
