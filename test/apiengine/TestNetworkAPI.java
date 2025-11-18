@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import apiimplementation.ConceptualAPIImpl;
 import apiimplementation.NetworkAPIImpl;
-import apinetwork.ComputationOutput;
+import apiimplementation.ConceptualAPIImpl;
 import apinetwork.Delimiters;
 import apinetwork.JobRequest;
 import testhelpers.TestInputConfig;
