@@ -1,6 +1,11 @@
 package apistorage;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +30,9 @@ public class ProcessAPIFileImpl implements ProcessAPI {
             String line;
             while ((line = br.readLine()) != null) {
                 String t = line.trim();
-                if (t.isEmpty()) continue;
+                if (t.isEmpty()) {
+                    continue; 
+                }
                 try {
                     ints.add(Integer.parseInt(t));
                 } catch (NumberFormatException nfe) {
