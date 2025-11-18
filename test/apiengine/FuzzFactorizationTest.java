@@ -3,6 +3,7 @@ package apiengine;
 import apiimplementation.ConceptualAPIImpl;
 import apinetwork.ComputationInput;
 import org.junit.jupiter.api.Test;
+
 import java.util.Random;
 
 public class FuzzFactorizationTest {
@@ -12,7 +13,7 @@ public class FuzzFactorizationTest {
         System.out.println("Fuzz seed: " + seed);
         Random rnd = new Random(seed);
 
-        // we don't need the test store here — this fuzz test exercises pure computation
+        // Pure conceptual engine — no storage writes here
         ConceptualAPIImpl engine = new ConceptualAPIImpl();
 
         for (int i = 0; i < 500; i++) {

@@ -14,6 +14,7 @@ import testhelpers.TestInputConfig;
 import testhelpers.TestOutputConfig;
 import testhelpers.TestProcessDataStore;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,20 +22,16 @@ public class TestNetworkAPI {
 
     @Test
     public void testSendJob_ValidRequest_writesResultToStore() {
-        // Arrange: empty store (we'll just test a single-job write)
         TestInputConfig in = new TestInputConfig(Collections.emptyList());
         TestOutputConfig outConfig = new TestOutputConfig();
         TestProcessDataStore store = new TestProcessDataStore(in, outConfig);
 
-        // Coordinator uses the test store and pure conceptual engine
         ConceptualAPIImpl conceptual = new ConceptualAPIImpl();
         NetworkAPIImpl network = new NetworkAPIImpl(store, conceptual);
 
-        // Act: single job
         JobRequest req = new JobRequest(5, new Delimiters(":", " × "));
         ComputationOutput out = network.sendJob(req);
 
-        // Assert: returned output non-null and written to store
         assertNotNull(out, "ComputationOutput should not be null");
         List<String> outputs = outConfig.getOutputs();
         assertEquals(1, outputs.size(), "Single job should produce one output");
@@ -42,22 +39,23 @@ public class TestNetworkAPI {
     }
 
     @Test
-    public void testSendJob_NullRequest_writesMarkerAndReturnsInvalid() {
-        // Arrange
-        TestInputConfig in = new TestInputConfig(Collections.emptyList());
+    public void testSendJob_BatchMode_readsStoreAndWritesResults() {
+        TestInputConfig in = new TestInputConfig(Arrays.asList(1, 10, 25));
         TestOutputConfig outConfig = new TestOutputConfig();
         TestProcessDataStore store = new TestProcessDataStore(in, outConfig);
 
         ConceptualAPIImpl conceptual = new ConceptualAPIImpl();
         NetworkAPIImpl network = new NetworkAPIImpl(store, conceptual);
 
-        // Act: null job
-        ComputationOutput out = network.sendJob(null);
+        JobRequest batchJob = new JobRequest(-1, new Delimiters(":", " × "));
+        ComputationOutput summary = network.sendJob(batchJob);
 
-        // Assert: non-null result and marker written to store
-        assertNotNull(out, "ComputationOutput should not be returned even for null request");
+        assertNotNull(summary);
         List<String> outputs = outConfig.getOutputs();
-        assertEquals(1, outputs.size(), "Null job should result in one output marker");
-        assertEquals("network:null-job", outputs.get(0), "Expected null-job marker written");
+        assertEquals(4, outputs.size()); // 3 results + summary
+        assertEquals("1", outputs.get(0));
+        assertEquals("2 × 5", outputs.get(1));
+        assertEquals("5 × 5", outputs.get(2));
+        assertEquals("batch:completed:3", outputs.get(3));
     }
 }
