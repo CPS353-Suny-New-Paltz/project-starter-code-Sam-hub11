@@ -1,16 +1,18 @@
 package apiengine;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
-
-import apiimplementation.NetworkAPIImpl;
-import apiimplementation.ConceptualAPIImpl;
-import testhelpers.TestInputConfig;
-import testhelpers.TestOutputConfig;
-import testhelpers.TestProcessDataStore;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+import apiimplementation.ConceptualAPIImpl;
+import apiimplementation.NetworkAPIImpl;
+import testhelpers.TestInputConfig;
+import testhelpers.TestOutputConfig;
+import testhelpers.TestProcessDataStore;
 
 public class TestNetworkAPINullJob {
 
