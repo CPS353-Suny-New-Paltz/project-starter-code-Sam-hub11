@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class ManualTestingFramework {
 
     // Parses raw string lines into integers, skipping blank and malformed entries.
     public static List<Integer> parseInputLines(List<String> rawLines) {
-        java.util.List<Integer> ints = new java.util.ArrayList<>();
+        ArrayList<Integer> ints = new ArrayList<>();
         if (rawLines == null) {
             return ints;
         }

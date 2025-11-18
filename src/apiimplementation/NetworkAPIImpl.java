@@ -41,7 +41,7 @@ public class NetworkAPIImpl implements NetworkAPI {
                 String s = (out == null || out.getResult() == null) ? "null" : out.getResult();
                 processAPI.writeOutput(s);
             }
-            processAPI.writeOutput("batch:completed:" + inputs.size());
+            //processAPI.writeOutput("batch:completed:" + inputs.size());
             return new ComputationOutput("batch:success");
         }
 
