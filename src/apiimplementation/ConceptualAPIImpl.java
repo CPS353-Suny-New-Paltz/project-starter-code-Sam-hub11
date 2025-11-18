@@ -8,6 +8,10 @@ import apinetwork.Delimiters;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Pure conceptual API implementation — performs prime factorization only.
+ * IMPORTANT: no ProcessAPI dependency and no IO/writes here.
+ */
 public class ConceptualAPIImpl implements ConceptualAPI {
 
     // No-arg constructor only — pure computation, no side effects.

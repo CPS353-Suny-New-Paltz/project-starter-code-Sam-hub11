@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Tests for NetworkAPIImpl that assert observable outputs (no Mockito.verify).
+ */
 public class TestNetworkAPI {
 
     @Test
