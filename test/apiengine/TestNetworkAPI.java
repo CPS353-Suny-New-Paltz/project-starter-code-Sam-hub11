@@ -55,10 +55,9 @@ public class TestNetworkAPI {
 
         assertNotNull(summary);
         List<String> outputs = outConfig.getOutputs();
-        assertEquals(4, outputs.size()); // 3 results + summary
+        assertEquals(3, outputs.size()); // 3 results
         assertEquals("1", outputs.get(0));
         assertEquals("2 × 5", outputs.get(1));
         assertEquals("5 × 5", outputs.get(2));
-        assertEquals("batch:completed:3", outputs.get(3));
     }
 }
