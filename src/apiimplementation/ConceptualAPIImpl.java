@@ -4,83 +4,66 @@ import apiengine.ConceptualAPI;
 import apinetwork.ComputationInput;
 import apinetwork.ComputationOutput;
 import apinetwork.Delimiters;
-import apistorage.ProcessAPI;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Pure conceptual API implementation — performs prime factorization only.
+ * IMPORTANT: no ProcessAPI dependency and no IO/writes here.
+ */
 public class ConceptualAPIImpl implements ConceptualAPI {
 
-    private final ProcessAPI processAPI; 
-
+    // No-arg constructor only — pure computation, no side effects.
     public ConceptualAPIImpl() {
-        this.processAPI = null;
-    }
-
-    public ConceptualAPIImpl(ProcessAPI processAPI) {
-        this.processAPI = processAPI;
     }
 
     @Override
     public ComputationOutput compute(ComputationInput input) {
-        // null input 
+        // Defensive: handle null input
         if (input == null) {
-            String s = "null";
-            // If a ProcessAPI was provided, its "null" 
-            if (processAPI != null) {
-                processAPI.writeOutput(s);
-            }
-            return new ComputationOutput(s);
+            return new ComputationOutput("null");
         }
 
         int n = input.getInputNumber();
 
-        // Determine pair delimiter 
+        // Base case (0 or 1)
+        if (n <= 1) {
+            return new ComputationOutput(String.valueOf(n));
+        }
+
+        // Determine pair delimiter (use Delimiters if provided)
         String pairDelim = " × ";
         Delimiters d = input.getDelimiters();
         if (d != null && d.getPairDelimiter() != null) {
             pairDelim = d.getPairDelimiter();
         }
 
-        // Base case
-        if (n <= 1) {
-            String s = String.valueOf(n);
-            if (processAPI != null) {
-                processAPI.writeOutput(s);
-            }
-            return new ComputationOutput(s);
-        }
-
         // Compute factors and join
         List<Integer> factors = primeFactors(n);
         String result = joinFactors(factors, pairDelim);
-
-        if (processAPI != null) {
-            processAPI.writeOutput(result);
-        }
-
         return new ComputationOutput(result);
     }
 
-    // standard prime factorization
+    // Standard prime factorization
     private List<Integer> primeFactors(int n) {
-        List<Integer> facts = new ArrayList<>();
+        List<Integer> factors = new ArrayList<>();
         while (n % 2 == 0) {
-            facts.add(2);
+            factors.add(2);
             n /= 2;
         }
         int f = 3;
         while (f * f <= n) {
             while (n % f == 0) {
-                facts.add(f);
+                factors.add(f);
                 n /= f;
             }
             f += 2;
         }
         if (n > 1) {
-            facts.add(n);
+            factors.add(n);
         }
-        return facts;
+        return factors;
     }
 
     // join factors using pair delimiter
@@ -88,7 +71,7 @@ public class ConceptualAPIImpl implements ConceptualAPI {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < factors.size(); i++) {
             if (i > 0) {
-            	sb.append(delim);
+                sb.append(delim);
             }
             sb.append(factors.get(i));
         }

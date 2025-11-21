@@ -28,6 +28,7 @@ public class NetworkAPIImpl implements NetworkAPI {
             return new ComputationOutput("invalid-job");
         }
 
+        // Batch sentinel: -1 => read all inputs from storage and process each
         if (job.getInputNumber() == -1) {
             List<Integer> inputs = processAPI.readInputs();
             if (inputs == null || inputs.isEmpty()) {
@@ -40,10 +41,11 @@ public class NetworkAPIImpl implements NetworkAPI {
                 String s = (out == null || out.getResult() == null) ? "null" : out.getResult();
                 processAPI.writeOutput(s);
             }
-            processAPI.writeOutput("batch:completed:" + inputs.size());
+            //processAPI.writeOutput("batch:completed:" + inputs.size());
             return new ComputationOutput("batch:success");
         }
 
+        // Single job
         ComputationInput ci = new ComputationInput(job.getInputNumber(), job.getDelimiters());
         ComputationOutput out = conceptual.compute(ci);
         String s = (out == null || out.getResult() == null) ? "null" : out.getResult();
