@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ManualTestingFramework {
@@ -17,7 +16,7 @@ public class ManualTestingFramework {
 
     // Parses raw string lines into integers, skipping blank and malformed entries.
     public static List<Integer> parseInputLines(List<String> rawLines) {
-        ArrayList<Integer> ints = new ArrayList<>();
+        List<Integer> ints = new ArrayList<>();
         if (rawLines == null) {
             return ints;
         }
@@ -58,30 +57,40 @@ public class ManualTestingFramework {
         return runManualNetworkBatch(parseInputLines(rawLines));
     }
 
-
     public static void main(String[] args) throws IOException {
-        // Example input lines (the integration tests typically use similar small lists)
-        List<String> sampleInputLines = Arrays.asList("1", "10", "25");
-
         Path inputPath = Paths.get(INPUT);
-        // ensure parent dirs exist (if any) and write the input file
-        if (inputPath.getParent() != null) {
-            Files.createDirectories(inputPath.getParent());
+        List<String> rawLines = new ArrayList<>();
+
+        // If the input file exists, read it; otherwise use an empty list
+        if (Files.exists(inputPath)) {
+            rawLines = Files.readAllLines(inputPath);
         }
-        Files.write(inputPath, sampleInputLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
-        // Run the existing in-memory batch runner (parses the lines and executes)
-        List<String> outputs = runManualNetworkBatchFromRawLines(sampleInputLines);
+        // Run the batch using the raw lines from the input file (this produces a List<String> results)
+        List<String> outputs = runManualNetworkBatchFromRawLines(rawLines);
 
-        // Write outputs to output file (one line per output)
+        // Join outputs with commas into a single line (if no outputs, write an empty line)
+        String singleLine = "";
+        if (outputs != null && !outputs.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < outputs.size(); i++) {
+                if (i > 0) {
+                    sb.append(",");
+                }
+                sb.append(outputs.get(i));
+            }
+            singleLine = sb.toString();
+        }
+
         Path outputPath = Paths.get(OUTPUT);
         if (outputPath.getParent() != null) {
             Files.createDirectories(outputPath.getParent());
         }
-        Files.write(outputPath, outputs, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        // Write the single comma-separated line (truncate existing file)
+        Files.write(outputPath, singleLine.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
-        // Print a short summary so manual runs are easier to debug
-        System.out.println("[ManualTestingFramework] Wrote " + sampleInputLines.size() + " inputs to " + inputPath);
-        System.out.println("[ManualTestingFramework] Wrote " + outputs.size() + " outputs to " + outputPath);
+        // Small console summary for manual runs
+        System.out.println("[ManualTestingFramework] Read " + rawLines.size() + " input lines from " + inputPath);
+        System.out.println("[ManualTestingFramework] Wrote " + (singleLine.isEmpty() ? 0 : outputs.size()) + " outputs to " + outputPath);
     }
 }

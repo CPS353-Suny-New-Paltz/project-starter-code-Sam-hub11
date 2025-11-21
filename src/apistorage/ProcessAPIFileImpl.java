@@ -49,7 +49,6 @@ public class ProcessAPIFileImpl implements ProcessAPI {
     public boolean writeOutput(String data) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile, true))) {
             bw.write(data);
-            bw.newLine();
             return true;
         } catch (IOException ioe) {
             System.err.println("[ProcessAPIFileImpl] Error writing output file: " + ioe.getMessage());
