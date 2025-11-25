@@ -4,95 +4,78 @@ import apiengine.ConceptualAPI;
 import apinetwork.ComputationInput;
 import apinetwork.ComputationOutput;
 import apinetwork.Delimiters;
-import apistorage.ProcessAPI;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConceptualAPIImpl implements ConceptualAPI {
 
-    private final ProcessAPI processAPI; 
-
     public ConceptualAPIImpl() {
-        this.processAPI = null;
-    }
-
-    public ConceptualAPIImpl(ProcessAPI processAPI) {
-        this.processAPI = processAPI;
     }
 
     @Override
     public ComputationOutput compute(ComputationInput input) {
-        // null input 
-        if (input == null) {
-            String s = "null";
-            // If a ProcessAPI was provided, its "null" 
-            if (processAPI != null) {
-                processAPI.writeOutput(s);
+        try {
+            // Validation: keep existing behavior for null input (tests expect "null").
+            if (input == null) {
+                return new ComputationOutput("null");
             }
-            return new ComputationOutput(s);
-        }
 
-        int n = input.getInputNumber();
-
-        // Determine pair delimiter 
-        String pairDelim = " × ";
-        Delimiters d = input.getDelimiters();
-        if (d != null && d.getPairDelimiter() != null) {
-            pairDelim = d.getPairDelimiter();
-        }
-
-        // Base case
-        if (n <= 1) {
-            String s = String.valueOf(n);
-            if (processAPI != null) {
-                processAPI.writeOutput(s);
+            // Validate numeric input: negative values are considered invalid for this API.
+            int n = input.getInputNumber();
+            if (n < 0) {
+                return new ComputationOutput("error:negative-input");
             }
-            return new ComputationOutput(s);
+
+            // Determine pair delimiter (Delimiters null-check)
+            String pairDelim = " × ";
+            Delimiters d = input.getDelimiters();
+            if (d != null && d.getPairDelimiter() != null) {
+                pairDelim = d.getPairDelimiter();
+            }
+
+            // Base cases
+            if (n <= 1) {
+                return new ComputationOutput(String.valueOf(n));
+            }
+
+            List<Integer> factors = primeFactors(n);
+            return new ComputationOutput(joinFactors(factors, pairDelim));
+        } catch (Exception ex) {
+            String msg = ex.getMessage() == null ? "unknown" : ex.getMessage();
+            return new ComputationOutput("error:compute-exception:" + msg);
         }
-
-        // Compute factors and join
-        List<Integer> factors = primeFactors(n);
-        String result = joinFactors(factors, pairDelim);
-
-        if (processAPI != null) {
-            processAPI.writeOutput(result);
-        }
-
-        return new ComputationOutput(result);
     }
 
-    // standard prime factorization
+    // Standard prime factorization
     private List<Integer> primeFactors(int n) {
-        List<Integer> facts = new ArrayList<>();
+        List<Integer> factors = new ArrayList<>();
         while (n % 2 == 0) {
-            facts.add(2);
+            factors.add(2);
             n /= 2;
         }
         int f = 3;
         while (f * f <= n) {
             while (n % f == 0) {
-                facts.add(f);
+                factors.add(f);
                 n /= f;
             }
             f += 2;
         }
         if (n > 1) {
-            facts.add(n);
+            factors.add(n);
         }
-        return facts;
+        return factors;
     }
 
-    // join factors using pair delimiter
     private String joinFactors(List<Integer> factors, String delim) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < factors.size(); i++) {
             if (i > 0) {
-            	sb.append(delim);
+                sb.append(delim);
             }
             sb.append(factors.get(i));
         }
         return sb.toString();
     }
 }
-
