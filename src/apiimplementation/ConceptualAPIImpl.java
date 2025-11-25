@@ -84,3 +84,4 @@ public class ConceptualAPIImpl implements ConceptualAPI {
         return sb.toString();
     }
 }
+

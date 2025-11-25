@@ -29,20 +29,20 @@ public class ComputeEngineIntegrationTest {
             conceptual.compute(new ComputationInput(n, (Delimiters) null));
         }
 
-        //Assert: validate what was written to the test output matches expected factorization strings
+        // Assert: validate what was written to the test output matches expected factorization strings
         List<String> outputs = outputConfig.getOutputs();
 
         List<String> expected = Arrays.asList(
-                "1",          
-                "2 × 5",     
-                "5 × 5"       
+                "1",
+                "2 × 5",
+                "5 × 5"
         );
 
-        //Verify size first
+        // Verify size first
         assertEquals(expected.size(), outputs.size(),
                 "Number of outputs written should match number of inputs");
 
-        //Verify content (order matters: same order as inputs)
+        // Verify content (order matters: same order as inputs)
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i), outputs.get(i),
                     "Output mismatch at index " + i + " (input=" + inputConfig.getInputs().get(i) + ")");
