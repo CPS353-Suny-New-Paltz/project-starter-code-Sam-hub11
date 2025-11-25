@@ -8,6 +8,11 @@ import apinetwork.Delimiters;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Conceptual compute engine (prime factorization).
+ * - Validates inputs (null preserved, negative -> error sentinel).
+ * - Catches unexpected exceptions and returns ComputationOutput with "error:..." result.
+ */
 public class ConceptualAPIImpl implements ConceptualAPI {
 
     public ConceptualAPIImpl() {
