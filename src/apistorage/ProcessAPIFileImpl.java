@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-// Reads integers from inputPath (one per line) and appends outputs to outputPath.
+/**
+ * File-backed ProcessAPI implementation with validation and internal exception handling.
+ */
 public class ProcessAPIFileImpl implements ProcessAPI {
     private final File inputFile;
     private final File outputFile;
@@ -17,6 +19,23 @@ public class ProcessAPIFileImpl implements ProcessAPI {
     public ProcessAPIFileImpl(String inputPath, String outputPath) {
         this.inputFile = new File(inputPath);
         this.outputFile = new File(outputPath);
+
+        try {
+            if (this.inputFile.getParentFile() != null) {
+                this.inputFile.getParentFile().mkdirs();
+            }
+            if (this.outputFile.getParentFile() != null) {
+                this.outputFile.getParentFile().mkdirs();
+            }
+            if (!this.inputFile.exists()) {
+                this.inputFile.createNewFile();
+            }
+            if (!this.outputFile.exists()) {
+                this.outputFile.createNewFile();
+            }
+        } catch (IOException ioe) {
+            System.err.println("[ProcessAPIFileImpl] Warning: failed to prepare files: " + ioe.getMessage());
+        }
     }
 
     @Override
@@ -31,7 +50,7 @@ public class ProcessAPIFileImpl implements ProcessAPI {
             while ((line = br.readLine()) != null) {
                 String t = line.trim();
                 if (t.isEmpty()) {
-                    continue; 
+                    continue;
                 }
                 try {
                     ints.add(Integer.parseInt(t));
@@ -47,8 +66,13 @@ public class ProcessAPIFileImpl implements ProcessAPI {
 
     @Override
     public boolean writeOutput(String data) {
+        if (data == null) {
+            System.err.println("[ProcessAPIFileImpl] Warning: trying to write null output");
+            return false;
+        }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile, true))) {
             bw.write(data);
+            bw.newLine();
             return true;
         } catch (IOException ioe) {
             System.err.println("[ProcessAPIFileImpl] Error writing output file: " + ioe.getMessage());

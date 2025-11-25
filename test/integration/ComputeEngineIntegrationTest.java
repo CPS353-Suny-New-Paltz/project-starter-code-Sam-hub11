@@ -1,7 +1,7 @@
 package integration;
 
 import apiimplementation.ConceptualAPIImpl;
-import apiimplementation.NetworkAPIImpl;
+import apinetwork.ComputationInput;
 import apinetwork.Delimiters;
 import org.junit.jupiter.api.Test;
 import testhelpers.TestInputConfig;
@@ -21,14 +21,13 @@ public class ComputeEngineIntegrationTest {
         TestOutputConfig outputConfig = new TestOutputConfig();
         TestProcessDataStore testStore = new TestProcessDataStore(inputConfig, outputConfig);
 
-        // Pure compute engine (no ProcessAPI dependency)
-        ConceptualAPIImpl conceptual = new ConceptualAPIImpl();
-
-        // Network coordinator handles reads from store and writes results
-        NetworkAPIImpl network = new NetworkAPIImpl(testStore, conceptual);
-
-        // Run a batch job (sentinel -1) so network reads all inputs and writes results
-        network.sendJob(new apinetwork.JobRequest(-1, new Delimiters(":", " × ")));
+        //Instantiate your Conceptual API implementation and inject the test store
+        ConceptualAPIImpl conceptual = new ConceptualAPIImpl(testStore);
+        //The constructor ConceptualAPIImpl(TestProcessDataStore) is undefined
+        
+        for (Integer n : testStore.readInputs()) {
+            conceptual.compute(new ComputationInput(n, (Delimiters) null));
+        }
 
         // Assert: validate what was written to the test output matches expected factorization strings
         List<String> outputs = outputConfig.getOutputs();
