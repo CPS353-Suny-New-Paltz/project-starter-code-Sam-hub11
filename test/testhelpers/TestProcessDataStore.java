@@ -30,14 +30,18 @@ public class TestProcessDataStore implements ProcessAPI {
     public boolean writeOutput(String data) {
         try {
             if (outputConfig == null) {
-            	return false;
+                return false;
             }
+            // Debug logging to show what tests actually write during runs
+            System.out.println("[TestProcessDataStore] writeOutput: " + data);
             outputConfig.write(data);
             return true;
         } catch (Throwable t) {
+            System.out.println("[TestProcessDataStore] writeOutput THREW: " + t.getMessage());
             return false;
         }
     }
+
 
     //Test helper to access the TestOutputConfig for assertions in tests.
 

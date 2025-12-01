@@ -23,12 +23,16 @@ public class ProcessAPIImpl implements ProcessAPI {
     @Override
     public boolean writeOutput(String data) {
         try {
+            // debug log so CI/test output shows what's written
+            System.out.println("[ProcessAPIImpl] writeOutput: " + data);
             outputs.add(data);
             return true;
         } catch (Exception e) {
+            System.out.println("[ProcessAPIImpl] writeOutput THREW: " + e.getMessage());
             return false;
         }
     }
+
 
     // helpers for tests
     public List<String> getAllOutputs() {
