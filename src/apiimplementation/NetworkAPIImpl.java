@@ -28,7 +28,7 @@ public class NetworkAPIImpl implements NetworkAPI {
             try {
                 processAPI.writeOutput("network:null-job");
             } catch (Throwable t) {
-                System.err.println("[NetworkAPIImpl] failed to write null-job marker: " + t.getMessage());
+                System.err.println("NetworkAPIImpl failed to write null-job marker: " + t.getMessage());
             }
             return new ComputationOutput("invalid-job");
         }
@@ -42,12 +42,18 @@ public class NetworkAPIImpl implements NetworkAPI {
                 } catch (Throwable t) {
                     try {
                         processAPI.writeOutput("batch:read-error");
-                    } catch (Throwable ignored) {}
+                    } catch (Throwable t2) {
+                        System.err.println("NetworkAPIImpl failed to write batch:read-error: " + t2.getMessage());
+                    }
                     return new ComputationOutput("batch:error");
                 }
 
                 if (inputs == null || inputs.isEmpty()) {
-                    try { processAPI.writeOutput("batch:no-inputs"); } catch (Throwable ignored) {}
+                    try {
+                        processAPI.writeOutput("batch:no-inputs");
+                    } catch (Throwable t) {
+                        System.err.println("NetworkAPIImpl failed to write batch:no-inputs: " + t.getMessage());
+                    }
                     return new ComputationOutput("batch:empty");
                 }
 
@@ -59,18 +65,30 @@ public class NetworkAPIImpl implements NetworkAPI {
                     try {
                         processAPI.writeOutput(s);
                     } catch (Throwable t) {
-                        try { processAPI.writeOutput("batch:write-failure"); } catch (Throwable ignored) {}
+                        try {
+                            processAPI.writeOutput("batch:write-failure");
+                        } catch (Throwable t2) {
+                            System.err.println("NetworkAPIImpl failed to write batch:write-failure: " + t2.getMessage());
+                        }
                         return new ComputationOutput("batch:error");
                     }
                     processed++;
                 }
-                try { processAPI.writeOutput("batch:completed:" + processed); } catch (Throwable ignored) {}
+                try {
+                    processAPI.writeOutput("batch:completed:" + processed);
+                } catch (Throwable t) {
+                    System.err.println("NetworkAPIImpl failed to write batch:completed marker: " + t.getMessage());
+                }
                 return new ComputationOutput("batch:success");
             }
 
             // Single job validation
             if (job.getInputNumber() < 0) {
-                try { processAPI.writeOutput("network:invalid-input-number"); } catch (Throwable ignored) {}
+                try {
+                    processAPI.writeOutput("network:invalid-input-number");
+                } catch (Throwable t) {
+                    System.err.println("NetworkAPIImpl failed to write network:invalid-input-number: " + t.getMessage());
+                }
                 return new ComputationOutput("invalid-job");
             }
 
@@ -80,13 +98,21 @@ public class NetworkAPIImpl implements NetworkAPI {
             try {
                 processAPI.writeOutput(s);
             } catch (Throwable t) {
-                try { processAPI.writeOutput("network:write-failure"); } catch (Throwable ignored) {}
+                try {
+                    processAPI.writeOutput("network:write-failure");
+                } catch (Throwable t2) {
+                    System.err.println("NetworkAPIImpl failed to write network:write-failure: " + t2.getMessage());
+                }
                 return new ComputationOutput("error:write-failed");
             }
             return out;
         } catch (Exception ex) {
             String msg = ex.getMessage() == null ? "unknown" : ex.getMessage();
-            try { processAPI.writeOutput("network:error:" + msg); } catch (Throwable ignored) {}
+            try {
+                processAPI.writeOutput("network:error:" + msg);
+            } catch (Throwable t) {
+                System.err.println("NetworkAPIImpl failed to write network:error: " + t.getMessage());
+            }
             return new ComputationOutput("error:network-exception:" + msg);
         }
     }
