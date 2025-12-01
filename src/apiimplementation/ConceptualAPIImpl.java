@@ -8,41 +8,44 @@ import apinetwork.Delimiters;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Pure conceptual API implementation — performs prime factorization only.
- * IMPORTANT: no ProcessAPI dependency and no IO/writes here.
- */
+
 public class ConceptualAPIImpl implements ConceptualAPI {
 
-    // No-arg constructor only — pure computation, no side effects.
     public ConceptualAPIImpl() {
     }
 
     @Override
     public ComputationOutput compute(ComputationInput input) {
-        // Defensive: handle null input
-        if (input == null) {
-            return new ComputationOutput("null");
+        try {
+            // Validation: keep existing behavior for null input (tests expect "null").
+            if (input == null) {
+                return new ComputationOutput("null");
+            }
+
+            // Validate numeric input: negative values are considered invalid for this API.
+            int n = input.getInputNumber();
+            if (n < 0) {
+                return new ComputationOutput("error:negative-input");
+            }
+
+            // Determine pair delimiter (Delimiters null-check)
+            String pairDelim = " × ";
+            Delimiters d = input.getDelimiters();
+            if (d != null && d.getPairDelimiter() != null) {
+                pairDelim = d.getPairDelimiter();
+            }
+
+            // Base cases
+            if (n <= 1) {
+                return new ComputationOutput(String.valueOf(n));
+            }
+
+            List<Integer> factors = primeFactors(n);
+            return new ComputationOutput(joinFactors(factors, pairDelim));
+        } catch (Exception ex) {
+            String msg = ex.getMessage() == null ? "unknown" : ex.getMessage();
+            return new ComputationOutput("error:compute-exception:" + msg);
         }
-
-        int n = input.getInputNumber();
-
-        // Base case (0 or 1)
-        if (n <= 1) {
-            return new ComputationOutput(String.valueOf(n));
-        }
-
-        // Determine pair delimiter (use Delimiters if provided)
-        String pairDelim = " × ";
-        Delimiters d = input.getDelimiters();
-        if (d != null && d.getPairDelimiter() != null) {
-            pairDelim = d.getPairDelimiter();
-        }
-
-        // Compute factors and join
-        List<Integer> factors = primeFactors(n);
-        String result = joinFactors(factors, pairDelim);
-        return new ComputationOutput(result);
     }
 
     // Standard prime factorization
@@ -66,7 +69,6 @@ public class ConceptualAPIImpl implements ConceptualAPI {
         return factors;
     }
 
-    // join factors using pair delimiter
     private String joinFactors(List<Integer> factors, String delim) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < factors.size(); i++) {
@@ -78,4 +80,3 @@ public class ConceptualAPIImpl implements ConceptualAPI {
         return sb.toString();
     }
 }
-
