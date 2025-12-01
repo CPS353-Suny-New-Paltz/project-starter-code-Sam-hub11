@@ -9,14 +9,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * File-backed ProcessAPI implementation with validation and internal exception handling.
- */
 public class ProcessAPIFileImpl implements ProcessAPI {
     private final File inputFile;
     private final File outputFile;
 
     public ProcessAPIFileImpl(String inputPath, String outputPath) {
+        // Validate file paths (non-null, create directories/files if missing)
         this.inputFile = new File(inputPath);
         this.outputFile = new File(outputPath);
 
@@ -67,16 +65,19 @@ public class ProcessAPIFileImpl implements ProcessAPI {
     @Override
     public boolean writeOutput(String data) {
         if (data == null) {
-            System.err.println("[ProcessAPIFileImpl] Warning: trying to write null output");
+            System.err.println("ProcessAPIFileImpl Warning: trying to write null output");
             return false;
         }
+        // Debug print
+        System.out.println("[ProcessAPIFileImpl] writeOutput: \"" + data + "\"");
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile, true))) {
             bw.write(data);
             bw.newLine();
             return true;
         } catch (IOException ioe) {
-            System.err.println("[ProcessAPIFileImpl] Error writing output file: " + ioe.getMessage());
+            System.err.println("ProcessAPIFileImpl Error writing output file: " + ioe.getMessage());
             return false;
         }
     }
+
 }
