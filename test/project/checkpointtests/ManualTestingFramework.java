@@ -61,9 +61,13 @@ public class ManualTestingFramework {
         // Filter out markers and take first token of factorization
         List<String> resultLines = new ArrayList<>();
         for (String line : writtenLines) {
-            if (line == null) continue;
+            if (line == null) {
+                continue;
+            }
             String t = line.trim();
-            if (t.isEmpty()) continue;
+            if (t.isEmpty()) {
+                continue;
+            }
             String lower = t.toLowerCase();
             if (lower.contains("batch") || lower.contains("network") || lower.contains("error")) {
                 continue; // skip marker lines
