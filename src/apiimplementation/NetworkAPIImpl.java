@@ -7,7 +7,6 @@ import apinetwork.ComputationOutput;
 import apinetwork.JobRequest;
 import apistorage.ProcessAPI;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NetworkAPIImpl implements NetworkAPI {
@@ -24,7 +23,7 @@ public class NetworkAPIImpl implements NetworkAPI {
 
     @Override
     public ComputationOutput sendJob(JobRequest job) {
-        // Validate job param
+        // Validate job parameter
         if (job == null) {
             try {
                 processAPI.writeOutput("network:null-job");
@@ -35,12 +34,13 @@ public class NetworkAPIImpl implements NetworkAPI {
         }
 
         try {
-            // Batch mode: read inputs, compute each
+            // Batch mode: sentinel -1
             if (job.getInputNumber() == -1) {
                 List<Integer> inputs;
                 try {
                     inputs = processAPI.readInputs();
                 } catch (Throwable t) {
+                    // read error -> observable marker + error return
                     try {
                         processAPI.writeOutput("batch:read-error");
                     } catch (Throwable t2) {
@@ -58,27 +58,57 @@ public class NetworkAPIImpl implements NetworkAPI {
                     return new ComputationOutput("batch:empty");
                 }
 
-                // compute each result and collect them
-                List<String> results = new ArrayList<>();
+                int processed = 0;
+                // compute and write EACH result as its own call to processAPI.writeOutput(...)
                 for (Integer v : inputs) {
                     ComputationInput ci = new ComputationInput(v, job.getDelimiters());
                     ComputationOutput out = conceptual.compute(ci);
-                    results.add(out == null || out.getResult() == null ? "null" : out.getResult());
+                    String s = (out == null || out.getResult() == null) ? "null" : out.getResult();
+
+                    // attempt to write this one-line result
+                    boolean wroteOk;
+                    try {
+                        wroteOk = processAPI.writeOutput(s);
+                    } catch (Throwable t) {
+                        // indicate write failure and return error sentinel
+                        try {
+                            processAPI.writeOutput("batch:write-failure");
+                        } catch (Throwable t2) {
+                            System.err.println("NetworkAPIImpl failed to write batch:write-failure: " + t2.getMessage());
+                        }
+                        return new ComputationOutput("batch:error");
+                    }
+
+                    if (!wroteOk) {
+                        try {
+                            processAPI.writeOutput("batch:write-failure");
+                        } catch (Throwable t) {
+                            System.err.println("NetworkAPIImpl failed to write batch:write-failure: " + t.getMessage());
+                        }
+                        return new ComputationOutput("batch:error");
+                    }
+
+                    processed++;
                 }
 
-                // Write ONE comma-separated line to storage for checkpoint4 compatibility
+                // after writing each result on its own line, write the completion marker
+                String completedMarker = "batch:completed:" + processed;
                 try {
-                    processAPI.writeOutput(String.join(",", results));
+                    boolean ok = processAPI.writeOutput(completedMarker);
+                    if (!ok) {
+                        System.err.println("NetworkAPIImpl storage.writeOutput returned false for batch completed marker");
+                        return new ComputationOutput("batch:error");
+                    }
                 } catch (Throwable t) {
-                    System.err.println("NetworkAPIImpl failed to write batch results: " + t.getMessage());
+                    System.err.println("NetworkAPIImpl failed to write batch:completed marker: " + t.getMessage());
                     return new ComputationOutput("batch:error");
                 }
 
-                // Return a generic batch success marker
-                return new ComputationOutput("batch:success");
+                // return the completed marker as the summary output
+                return new ComputationOutput(completedMarker);
             }
 
-            // Single job validation
+            // Single job path
             if (job.getInputNumber() < 0) {
                 try {
                     processAPI.writeOutput("network:invalid-input-number");
@@ -88,7 +118,6 @@ public class NetworkAPIImpl implements NetworkAPI {
                 return new ComputationOutput("invalid-job");
             }
 
-            // Normal single job path
             ComputationInput ci = new ComputationInput(job.getInputNumber(), job.getDelimiters());
             ComputationOutput out = conceptual.compute(ci);
             String s = (out == null || out.getResult() == null) ? "null" : out.getResult();
