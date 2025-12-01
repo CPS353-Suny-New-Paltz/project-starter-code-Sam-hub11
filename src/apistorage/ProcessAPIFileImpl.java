@@ -1,10 +1,8 @@
 package apistorage;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,22 +63,29 @@ public class ProcessAPIFileImpl implements ProcessAPI {
     @Override
     public boolean writeOutput(String data) {
         if (data == null) {
-            System.err.println("ProcessAPIFileImpl Warning: trying to write null output");
+            System.err.println("[ProcessAPIFileImpl] Warning: trying to write null output");
             return false;
         }
         // Normalize spaces: trim the data before writing to file so file contains canonical strings.
         String normalized = data.trim();
-        // Debug print 
-        System.out.println("ProcessAPIFileImpl writeOutput: \"" + normalized + "\"");
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile, true))) {
-            bw.write(normalized);
-            bw.newLine();
+        // Debug print (will show exactly what we write)
+        System.out.println("[ProcessAPIFileImpl] writeOutput: \"" + normalized + "\"");
+        try {
+            // Use Files.writeString with UTF-8 and APPEND to avoid platform FileWriter quirks
+            java.nio.file.Files.writeString(
+                    outputFile.toPath(),
+                    normalized + System.lineSeparator(),
+                    java.nio.charset.StandardCharsets.UTF_8,
+                    java.nio.file.StandardOpenOption.CREATE,
+                    java.nio.file.StandardOpenOption.APPEND
+            );
             return true;
         } catch (IOException ioe) {
             System.err.println("[ProcessAPIFileImpl] Error writing output file: " + ioe.getMessage());
             return false;
         }
     }
+
 
 
 }

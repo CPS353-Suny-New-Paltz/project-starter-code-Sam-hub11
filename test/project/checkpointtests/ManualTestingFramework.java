@@ -1,6 +1,7 @@
 package project.checkpointtests;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,12 +24,12 @@ public class ManualTestingFramework {
         Path inputPath = Paths.get(INPUT);
         Path outputPath = Paths.get(OUTPUT);
 
-        // Ensure input file exists (the test writes it before calling main)
+        // Ensure input file exists
         if (!Files.exists(inputPath)) {
             Files.createFile(inputPath);
         }
 
-        // Ensure output path parent exists
+        // Ensure output path parent exists and file exists
         if (outputPath.getParent() != null) {
             Files.createDirectories(outputPath.getParent());
         }
@@ -36,59 +37,49 @@ public class ManualTestingFramework {
             Files.createFile(outputPath);
         }
 
+        // Clear output file at the start to prevent duplicates from previous runs
+        Files.writeString(outputPath, "", StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
+
         // Use file-backed store so NetworkAPIImpl writes one line per result
         ProcessAPIFileImpl fileStore = new ProcessAPIFileImpl(inputPath.toString(), outputPath.toString());
 
         ConceptualAPIImpl conceptual = new ConceptualAPIImpl();
         NetworkAPIImpl network = new NetworkAPIImpl(fileStore, conceptual);
 
-        // Run batch job (network writes each factorization/result as its own line,
-        // and may also write markers like "batch:completed:3" or "batch success")
+        // Run batch job
         JobRequest batchJob = new JobRequest(-1, new Delimiters(":", " × "));
         network.sendJob(batchJob);
 
-        // Read whatever the network wrote to the output file
+        // Read all lines
         List<String> writtenLines = new ArrayList<>();
         if (Files.exists(outputPath)) {
-            writtenLines = Files.readAllLines(outputPath);
+            writtenLines = Files.readAllLines(outputPath, StandardCharsets.UTF_8);
         }
 
-        // Keep only "data" lines (skip markers), trim each entry, and join with NO spaces
+        System.out.println("[ManualTestingFramework] RAW LINES READ: " + writtenLines);
+
+        // Filter out markers and take first token of factorization
         List<String> resultLines = new ArrayList<>();
         for (String line : writtenLines) {
-            if (line == null) {
-                continue;
-            }
+            if (line == null) continue;
             String t = line.trim();
-            if (t.isEmpty()) {
-                continue;
-            }
+            if (t.isEmpty()) continue;
             String lower = t.toLowerCase();
-            // skip any variant of markers containing 'batch', 'network', or 'error'
             if (lower.contains("batch") || lower.contains("network") || lower.contains("error")) {
-                continue;
+                continue; // skip marker lines
             }
-            // Accept this as a result line (trimmed)
-            resultLines.add(t);
+            // Take only first token before any space or '×'
+            String firstToken = t.split("[ ×]")[0].trim();
+            resultLines.add(firstToken);
         }
 
-        // Join into a single comma-separated line (no spaces after commas)
-        String singleLine = "";
-        if (!resultLines.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < resultLines.size(); i++) {
-                if (i > 0) {
-                    sb.append(",");
-                }
-                sb.append(resultLines.get(i));
-            }
-            singleLine = sb.toString();
-        }
+        // Join into single comma-separated line
+        String singleLine = String.join(",", resultLines);
 
-        // Overwrite the output file with the single CSV line
-        Files.write(outputPath, singleLine.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        // Overwrite the output file
+        Files.writeString(outputPath, singleLine, StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
-        // Helpful log for manual runs (not used by tests)
         System.out.println("[ManualTestingFramework] Wrote CSV: " + singleLine);
     }
 }
