@@ -32,7 +32,7 @@ public class ProcessAPIFileImpl implements ProcessAPI {
                 this.outputFile.createNewFile();
             }
         } catch (IOException ioe) {
-            System.err.println("[ProcessAPIFileImpl] Warning: failed to prepare files: " + ioe.getMessage());
+            System.err.println("ProcessAPIFileImpl Warning: failed to prepare files: " + ioe.getMessage());
         }
     }
 
@@ -40,7 +40,7 @@ public class ProcessAPIFileImpl implements ProcessAPI {
     public List<Integer> readInputs() {
         List<Integer> ints = new ArrayList<>();
         if (!inputFile.exists()) {
-            System.err.println("[ProcessAPIFileImpl] Input file not found: " + inputFile.getPath());
+            System.err.println("ProcessAPIFileImpl Input file not found: " + inputFile.getPath());
             return ints;
         }
         try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
@@ -53,11 +53,11 @@ public class ProcessAPIFileImpl implements ProcessAPI {
                 try {
                     ints.add(Integer.parseInt(t));
                 } catch (NumberFormatException nfe) {
-                    System.err.println("[ProcessAPIFileImpl] Skipping non-int line: " + t);
+                    System.err.println("ProcessAPIFileImpl Skipping non-int line: " + t);
                 }
             }
         } catch (IOException ioe) {
-            System.err.println("[ProcessAPIFileImpl] Error reading input file: " + ioe.getMessage());
+            System.err.println("ProcessAPIFileImpl Error reading input file: " + ioe.getMessage());
         }
         return ints;
     }
@@ -68,16 +68,19 @@ public class ProcessAPIFileImpl implements ProcessAPI {
             System.err.println("ProcessAPIFileImpl Warning: trying to write null output");
             return false;
         }
-        // Debug print
-        System.out.println("[ProcessAPIFileImpl] writeOutput: \"" + data + "\"");
+        // Normalize spaces: trim the data before writing to file so file contains canonical strings.
+        String normalized = data.trim();
+        // Debug print 
+        System.out.println("ProcessAPIFileImpl writeOutput: \"" + normalized + "\"");
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile, true))) {
-            bw.write(data);
+            bw.write(normalized);
             bw.newLine();
             return true;
         } catch (IOException ioe) {
-            System.err.println("ProcessAPIFileImpl Error writing output file: " + ioe.getMessage());
+            System.err.println("[ProcessAPIFileImpl] Error writing output file: " + ioe.getMessage());
             return false;
         }
     }
+
 
 }

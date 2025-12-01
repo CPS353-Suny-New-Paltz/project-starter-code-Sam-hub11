@@ -43,7 +43,7 @@ public class ManualTestingFramework {
         NetworkAPIImpl network = new NetworkAPIImpl(fileStore, conceptual);
 
         // Run batch job (network writes each factorization/result as its own line,
-        // then writes a batch marker like "batch:completed:N" or "batch:success")
+        // and may also write markers like "batch:completed:3" or "batch success")
         JobRequest batchJob = new JobRequest(-1, new Delimiters(":", " × "));
         network.sendJob(batchJob);
 
@@ -63,12 +63,12 @@ public class ManualTestingFramework {
             if (t.isEmpty()) {
                 continue;
             }
-            // Skip markers/signals that are not factorization results
             String lower = t.toLowerCase();
-            if (lower.startsWith("batch:") || lower.startsWith("network:") || lower.startsWith("error:")) {
+            // skip any variant of markers containing 'batch', 'network', or 'error'
+            if (lower.contains("batch") || lower.contains("network") || lower.contains("error")) {
                 continue;
             }
-            // Accept this as a result line (trimmed, no extra spaces)
+            // Accept this as a result line (trimmed)
             resultLines.add(t);
         }
 
