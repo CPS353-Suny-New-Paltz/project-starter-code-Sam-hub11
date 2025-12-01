@@ -35,13 +35,12 @@ public class NetworkAPIImpl implements NetworkAPI {
         }
 
         try {
-            // Batch mode: read inputs, compute each, write each result and then a summary marker
+            // Batch mode: read inputs, compute each
             if (job.getInputNumber() == -1) {
                 List<Integer> inputs;
                 try {
                     inputs = processAPI.readInputs();
                 } catch (Throwable t) {
-                    // translate read error to an observable marker and return an error result
                     try {
                         processAPI.writeOutput("batch:read-error");
                     } catch (Throwable t2) {
@@ -59,57 +58,24 @@ public class NetworkAPIImpl implements NetworkAPI {
                     return new ComputationOutput("batch:empty");
                 }
 
-                // compute and write each result, collecting the written lines (for safety)
-                List<String> writtenResults = new ArrayList<>();
-                int processed = 0;
+                // compute each result and collect them
+                List<String> results = new ArrayList<>();
                 for (Integer v : inputs) {
                     ComputationInput ci = new ComputationInput(v, job.getDelimiters());
                     ComputationOutput out = conceptual.compute(ci);
-                    String s = (out == null || out.getResult() == null) ? "null" : out.getResult();
-
-                    // write this result (if a write fails, propagate an error sentinel)
-                    boolean wroteOk;
-                    try {
-                        wroteOk = processAPI.writeOutput(s);
-                    } catch (Throwable t) {
-                        // attempt to indicate the write failure to storage, then return an error
-                        try {
-                            processAPI.writeOutput("batch:write-failure");
-                        } catch (Throwable t2) {
-                            System.err.println("NetworkAPIImpl failed to write batch:write-failure: " + t2.getMessage());
-                        }
-                        return new ComputationOutput("batch:error");
-                    }
-
-                    if (!wroteOk) {
-                        // storage reported failure — write a marker and return an error
-                        try {
-                            processAPI.writeOutput("batch:write-failure");
-                        } catch (Throwable t) {
-                            System.err.println("NetworkAPIImpl failed to write batch:write-failure: " + t.getMessage());
-                        }
-                        return new ComputationOutput("batch:error");
-                    }
-
-                    writtenResults.add(s);
-                    processed++;
+                    results.add(out == null || out.getResult() == null ? "null" : out.getResult());
                 }
 
-                // After all results have been successfully written, write a completion marker.
-                String completedMarker = "batch:completed:" + processed;
+                // Write ONE comma-separated line to storage for checkpoint4 compatibility
                 try {
-                    boolean ok = processAPI.writeOutput(completedMarker);
-                    if (!ok) {
-                        System.err.println("NetworkAPIImpl storage.writeOutput returned false for batch completed marker");
-                        return new ComputationOutput("batch:error");
-                    }
+                    processAPI.writeOutput(String.join(",", results));
                 } catch (Throwable t) {
-                    System.err.println("NetworkAPIImpl failed to write batch:completed marker: " + t.getMessage());
+                    System.err.println("NetworkAPIImpl failed to write batch results: " + t.getMessage());
                     return new ComputationOutput("batch:error");
                 }
 
-                // Return the completion marker as the ComputationOutput summary.
-                return new ComputationOutput(completedMarker);
+                // Return a generic batch success marker
+                return new ComputationOutput("batch:success");
             }
 
             // Single job validation
@@ -130,7 +96,6 @@ public class NetworkAPIImpl implements NetworkAPI {
             try {
                 boolean ok = processAPI.writeOutput(s);
                 if (!ok) {
-                    // storage returned failure
                     try {
                         processAPI.writeOutput("network:write-failure");
                     } catch (Throwable t2) {
@@ -139,7 +104,6 @@ public class NetworkAPIImpl implements NetworkAPI {
                     return new ComputationOutput("error:write-failed");
                 }
             } catch (Throwable t) {
-                // try to mark storage failure and return an error sentinel
                 try {
                     processAPI.writeOutput("network:write-failure");
                 } catch (Throwable t2) {

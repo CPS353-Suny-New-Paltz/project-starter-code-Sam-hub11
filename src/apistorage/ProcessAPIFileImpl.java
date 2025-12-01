@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * File-backed ProcessAPI implementation with validation and internal exception handling.
+ */
 public class ProcessAPIFileImpl implements ProcessAPI {
     private final File inputFile;
     private final File outputFile;
