@@ -28,7 +28,7 @@ public class ManualTestingFramework {
             Files.createFile(inputPath);
         }
 
-        // ensure parent directories for output exist
+        // Ensure output path parent exists
         if (outputPath.getParent() != null) {
             Files.createDirectories(outputPath.getParent());
         }
@@ -36,23 +36,24 @@ public class ManualTestingFramework {
             Files.createFile(outputPath);
         }
 
-        // Use file-backed ProcessAPI to allow NetworkAPIImpl to write per-line
+        // Use file-backed store so NetworkAPIImpl writes one line per result
         ProcessAPIFileImpl fileStore = new ProcessAPIFileImpl(inputPath.toString(), outputPath.toString());
 
         ConceptualAPIImpl conceptual = new ConceptualAPIImpl();
         NetworkAPIImpl network = new NetworkAPIImpl(fileStore, conceptual);
 
-        // Run batch job (Network writes one-line-per-result then a batch:completed:N marker)
+        // Run batch job (network writes each factorization/result as its own line,
+        // then writes a batch marker like "batch:completed:N" or "batch:success")
         JobRequest batchJob = new JobRequest(-1, new Delimiters(":", " × "));
         network.sendJob(batchJob);
 
-        // Now read everything the network wrote and collapse into a single comma-separated line
+        // Read whatever the network wrote to the output file
         List<String> writtenLines = new ArrayList<>();
         if (Files.exists(outputPath)) {
             writtenLines = Files.readAllLines(outputPath);
         }
 
-        // Keep only factorization lines (exclude batch markers and empty lines)
+        // Keep only "data" lines (skip markers), trim each entry, and join with NO spaces
         List<String> resultLines = new ArrayList<>();
         for (String line : writtenLines) {
             if (line == null) {
@@ -62,19 +63,16 @@ public class ManualTestingFramework {
             if (t.isEmpty()) {
                 continue;
             }
-            if (t.startsWith("batch:")) {
-                // skip summary or other batch markers
+            // Skip markers/signals that are not factorization results
+            String lower = t.toLowerCase();
+            if (lower.startsWith("batch:") || lower.startsWith("network:") || lower.startsWith("error:")) {
                 continue;
             }
-            if (t.startsWith("network:") || t.startsWith("error:")) {
-                // These are error markers — you may want to include or exclude them depending on your policy.
-                // For checkpoint compatibility, skip them from the single CSV output.
-                continue;
-            }
+            // Accept this as a result line (trimmed, no extra spaces)
             resultLines.add(t);
         }
 
-        // Join into one comma-separated line and overwrite file
+        // Join into a single comma-separated line (no spaces after commas)
         String singleLine = "";
         if (!resultLines.isEmpty()) {
             StringBuilder sb = new StringBuilder();
@@ -87,8 +85,10 @@ public class ManualTestingFramework {
             singleLine = sb.toString();
         }
 
+        // Overwrite the output file with the single CSV line
         Files.write(outputPath, singleLine.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
+        // Helpful log for manual runs (not used by tests)
         System.out.println("[ManualTestingFramework] Wrote CSV: " + singleLine);
     }
 }
