@@ -68,7 +68,7 @@ public class NetworkAPIImpl implements NetworkAPI {
                     String s = (out == null || out.getResult() == null) ? "null" : out.getResult();
 
                     // write this result (if a write fails, propagate an error sentinel)
-                    boolean wroteOk = false;
+                    boolean wroteOk;
                     try {
                         wroteOk = processAPI.writeOutput(s);
                     } catch (Throwable t) {
@@ -108,8 +108,7 @@ public class NetworkAPIImpl implements NetworkAPI {
                     return new ComputationOutput("batch:error");
                 }
 
-                // Return the completion marker as the ComputationOutput summary (tests inspect writtenOutputs not the return value,
-                // but returning the marker makes the behavior explicit).
+                // Return the completion marker as the ComputationOutput summary.
                 return new ComputationOutput(completedMarker);
             }
 
@@ -118,4 +117,46 @@ public class NetworkAPIImpl implements NetworkAPI {
                 try {
                     processAPI.writeOutput("network:invalid-input-number");
                 } catch (Throwable t) {
-                    System.err.println("NetworkAPIImpl failed to write network:invalid-input-number: " + t.getMessage())
+                    System.err.println("NetworkAPIImpl failed to write network:invalid-input-number: " + t.getMessage());
+                }
+                return new ComputationOutput("invalid-job");
+            }
+
+            // Normal single job path
+            ComputationInput ci = new ComputationInput(job.getInputNumber(), job.getDelimiters());
+            ComputationOutput out = conceptual.compute(ci);
+            String s = (out == null || out.getResult() == null) ? "null" : out.getResult();
+
+            try {
+                boolean ok = processAPI.writeOutput(s);
+                if (!ok) {
+                    // storage returned failure
+                    try {
+                        processAPI.writeOutput("network:write-failure");
+                    } catch (Throwable t2) {
+                        System.err.println("NetworkAPIImpl failed to write network:write-failure: " + t2.getMessage());
+                    }
+                    return new ComputationOutput("error:write-failed");
+                }
+            } catch (Throwable t) {
+                // try to mark storage failure and return an error sentinel
+                try {
+                    processAPI.writeOutput("network:write-failure");
+                } catch (Throwable t2) {
+                    System.err.println("NetworkAPIImpl failed to write network:write-failure: " + t2.getMessage());
+                }
+                return new ComputationOutput("error:write-failed");
+            }
+
+            return out;
+        } catch (Exception ex) {
+            String msg = ex.getMessage() == null ? "unknown" : ex.getMessage();
+            try {
+                processAPI.writeOutput("network:error:" + msg);
+            } catch (Throwable t) {
+                System.err.println("NetworkAPIImpl failed to write network:error: " + t.getMessage());
+            }
+            return new ComputationOutput("error:network-exception:" + msg);
+        }
+    }
+}
