@@ -2,6 +2,7 @@ package project.checkpointtests;
 
 import API_Package.MultithreadedNetworkAPI;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
