@@ -1,5 +1,7 @@
 package project.checkpointtests;
 
+import apipackage.MultithreadedNetworkAPI;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,11 +11,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import apipackage.MultithreadedNetworkAPI;
 
 public class TestMultiUser {
 
@@ -22,12 +22,6 @@ public class TestMultiUser {
     @BeforeEach
     public void initializeComputeEngine() {
         networkAPI = new MultithreadedNetworkAPI();
-    }
-
-    public void cleanup() {
-        if (networkAPI != null) {
-            networkAPI.shutdown();
-        }
     }
 
     @Test
@@ -39,6 +33,7 @@ public class TestMultiUser {
             testUsers.add(new TestUser());
         }
 
+        // Run single threaded
         String singleThreadFilePrefix =
                 "testMultiUser.compareMultiAndSingleThreaded.test.singleThreadOut.tmp";
 
@@ -48,6 +43,7 @@ public class TestMultiUser {
             testUsers.get(i).run(singleThreadedOut.getCanonicalPath(), false);
         }
 
+        // Run multi threaded
         ExecutorService threadPool = Executors.newCachedThreadPool();
         List<Future<?>> results = new ArrayList<>();
 
@@ -71,7 +67,7 @@ public class TestMultiUser {
         List<String> singleThreaded = loadAllOutput(singleThreadFilePrefix, nthreads);
         List<String> multiThreaded = loadAllOutput(multiThreadFilePrefix, nthreads);
 
-        Assert.assertEquals(singleThreaded, multiThreaded);
+        Assertions.assertEquals(singleThreaded, multiThreaded);
     }
 
     private List<String> loadAllOutput(String prefix, int nthreads) throws IOException {
