@@ -1,7 +1,5 @@
 package project.checkpointtests;
 
-import api_package.MultithreadedNetworkAPI;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,6 +12,8 @@ import java.util.concurrent.Future;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import apipackage.MultithreadedNetworkAPI;
 
 public class TestMultiUser {
 

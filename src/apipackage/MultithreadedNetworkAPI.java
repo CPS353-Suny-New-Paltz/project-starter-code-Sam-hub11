@@ -1,4 +1,4 @@
-package api_package;
+package apipackage;
 
 import apiengine.NetworkAPI;
 import apinetwork.JobRequest;
@@ -11,29 +11,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Multithreaded wrapper around NetworkAPIImpl.
- *
- * This class does NOT change computation semantics.
- * It simply runs sendJob asynchronously using a thread pool.
- */
 public class MultithreadedNetworkAPI implements NetworkAPI {
 
     private final ExecutorService executor;
     private final NetworkAPIImpl delegate;
 
-    /**
-     * Default constructor required by TestMultiUser.
-     * Uses a dummy executor; real work is done in TestUser.
-     */
     public MultithreadedNetworkAPI() {
         this.executor = Executors.newFixedThreadPool(4);
         this.delegate = null;
     }
 
-    /**
-     * Constructor used by TestUser.
-     */
+
     public MultithreadedNetworkAPI(
             ProcessAPI processAPI,
             ConceptualAPI conceptual,
@@ -56,9 +44,6 @@ public class MultithreadedNetworkAPI implements NetworkAPI {
         }
     }
 
-    /**
-     * Required by TestUser and TestMultiUser.
-     */
     public void shutdown() {
         executor.shutdown();
         try {
