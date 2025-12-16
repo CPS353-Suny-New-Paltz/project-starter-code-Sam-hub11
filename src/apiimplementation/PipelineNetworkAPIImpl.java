@@ -128,6 +128,7 @@ public class PipelineNetworkAPIImpl implements NetworkAPI {
                         nextIndex++;
                     }
                 } catch (InterruptedException e) {
+                    // Restore interrupt status and mark pipeline as failed
                     Thread.currentThread().interrupt();
                     failed.set(true);
                 }
