@@ -76,7 +76,9 @@ public class PipelineNetworkAPIImpl implements NetworkAPI {
         if (job == null) {
             try {
                 processAPI.writeOutput("network:null-job");
-            } catch (Throwable ignored) { }
+            } catch (Throwable t) {
+                // Ignore failure to preserve existing behavior
+            }
             return new ComputationOutput("invalid-job");
         }
 
@@ -162,6 +164,7 @@ public class PipelineNetworkAPIImpl implements NetworkAPI {
                         outputQueue.put(new ResultItem(item.index, result));
                     }
                 } catch (InterruptedException e) {
+                    // Worker interrupted while waiting for work
                     Thread.currentThread().interrupt();
                     failed.set(true);
                 } finally {
@@ -179,6 +182,7 @@ public class PipelineNetworkAPIImpl implements NetworkAPI {
                 inputQueue.put(WorkItem.POISON);
             }
         } catch (InterruptedException e) {
+            // Interrupted while enqueueing work
             Thread.currentThread().interrupt();
             failed.set(true);
         }
@@ -188,6 +192,7 @@ public class PipelineNetworkAPIImpl implements NetworkAPI {
             workersDone.await(10, TimeUnit.SECONDS);
             writer.join(10_000);
         } catch (InterruptedException e) {
+            // Interrupted while waiting for completion
             Thread.currentThread().interrupt();
             failed.set(true);
         }
